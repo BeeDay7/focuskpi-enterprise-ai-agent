@@ -1,0 +1,22 @@
+Churn Model Evaluation
+======================
+Accuracy : 0.7225
+Precision: 0.3250
+Recall   : 0.5652
+F1       : 0.4127
+ROC-AUC  : 0.6932
+PR-AUC   : 0.2983
+
+Confusion Matrix
+[[250  81]
+ [ 30  39]]
+
+Classification Report
+              precision    recall  f1-score   support
+
+           0     0.8929    0.7553    0.8183       331
+           1     0.3250    0.5652    0.4127        69
+
+    accuracy                         0.7225       400
+   macro avg     0.6089    0.6603    0.6155       400
+weighted avg     0.7949    0.7225    0.7484       400

@@ -1,0 +1,41 @@
+ENTERPRISE SECURITY POLICY
+
+Document ID: SEC-001
+Department: Information Security
+Version: 1.0
+
+Purpose
+
+This policy defines baseline controls for enterprise AI and data systems.
+
+Least privilege
+
+AI agents must only access tools and data required for the current task.
+
+Language models must not receive unrestricted direct database credentials.
+
+Database operations should be performed by controlled backend functions.
+
+Secrets management
+
+API keys, database passwords, session tokens, and other secrets must not be committed to source control.
+
+Production secrets should be stored through an approved secrets-management system.
+
+Prompt injection
+
+Retrieved enterprise documents must be treated as untrusted content.
+
+Instructions contained inside retrieved documents must not override system-level security policies.
+
+The AI agent must distinguish between data to summarize and instructions it is authorized to follow.
+
+Audit logging
+
+Security-sensitive tool calls should be logged where practical.
+
+Audit records should include the user identity, requested operation, tool name, timestamp, success status, and error category.
+
+Incident handling
+
+Suspected unauthorized access, data leakage, credential exposure, or malicious tool usage must be escalated according to the security incident response process.

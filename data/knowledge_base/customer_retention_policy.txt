@@ -1,0 +1,41 @@
+CUSTOMER RETENTION POLICY
+
+Document ID: RET-001
+Department: Customer Success
+Version: 1.0
+
+Purpose
+
+This policy defines the recommended workflow for identifying and responding to customers who show elevated churn risk.
+
+Risk categories
+
+Customers with a modeled churn probability below 0.50 are classified as low risk.
+
+Customers with a modeled churn probability from 0.50 through 0.69 are classified as medium risk.
+
+Customers with a modeled churn probability of 0.70 or higher are classified as high risk.
+
+Required response for high-risk customers
+
+Customer Success should review the customer's recent support history, payment behavior, product engagement, and account value.
+
+A high-risk customer with three or more unresolved support complaints should receive priority human review.
+
+Customer Success should contact the customer using the approved communication channel and document the intervention.
+
+Discounts or credits must not be automatically granted by the AI system. Any commercial concession requires approval under the applicable commercial policy.
+
+AI decision limitations
+
+Churn predictions are decision-support signals rather than guaranteed outcomes.
+
+Agents must not represent a predicted churn probability as a confirmed future event.
+
+Model results should be accompanied by the model version and evaluation context when used for operational decisions.
+
+Escalation
+
+High-value accounts with high churn risk must be escalated to the account owner.
+
+Accounts showing suspected fraudulent activity must be handled under the security incident process rather than the standard retention process.

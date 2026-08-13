@@ -1,0 +1,39 @@
+SALES ANALYTICS POLICY
+
+Document ID: SALES-001
+Department: Revenue Operations
+Version: 1.0
+
+Purpose
+
+This policy defines how sales information should be interpreted and reported.
+
+Approved analytics
+
+Regional sales totals may be used to identify high-performing and under-performing regions.
+
+Sales totals must be calculated from approved transaction records.
+
+Revenue figures should identify the relevant reporting period.
+
+AI-generated summaries must not alter source transaction values.
+
+Data interpretation
+
+A high-sales region is a region with comparatively strong recorded revenue for the selected reporting period.
+
+Sales performance does not by itself establish profitability.
+
+The AI assistant must distinguish recorded sales from forecasts and predictions.
+
+Reporting controls
+
+Users requesting sensitive financial information must be authenticated and authorized before protected information is returned.
+
+When data is incomplete, the assistant must disclose the limitation.
+
+The assistant must not fabricate missing transactions.
+
+Auditability
+
+Analytics requests should be logged with timestamp, requesting identity, query intent, and tools used whenever audit logging is enabled.

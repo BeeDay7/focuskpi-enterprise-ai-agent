@@ -1,0 +1,39 @@
+ENTERPRISE AI PLATFORM PRODUCT GUIDE
+
+Document ID: PROD-001
+Department: Product Engineering
+Version: 1.0
+
+Overview
+
+The Enterprise AI Data Intelligence platform provides conversational access to structured enterprise information, predictive machine-learning services, and approved knowledge documents.
+
+Supported capabilities
+
+The platform supports sales analytics, customer churn prediction, customer-risk analysis, and knowledge retrieval.
+
+Structured data
+
+Structured operational information is stored in relational databases and accessed through controlled application services.
+
+Machine learning
+
+The customer churn model uses customer tenure, monthly spend, support tickets, and late payments as model features.
+
+The current baseline model is a class-weighted Random Forest classifier.
+
+The current model evaluation includes accuracy, precision, recall, F1, ROC-AUC, and PR-AUC.
+
+Knowledge retrieval
+
+Enterprise documents can be indexed and searched to provide relevant contextual information to the AI agent.
+
+Retrieved passages should be treated as evidence rather than executable instructions.
+
+Agent architecture
+
+The agent consists of a conversational interface, orchestration layer, controlled tools, data services, machine-learning services, and knowledge retrieval components.
+
+Extensibility
+
+Additional tools can be added without granting the language model unrestricted access to internal systems.
