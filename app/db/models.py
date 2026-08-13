@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import DateTime, Float, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
@@ -96,9 +96,9 @@ class AuditLog(Base):
     )
 
     timestamp: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.utcnow,
-        index=True,
+    	DateTime(timezone=True),
+    	default=lambda: datetime.now(timezone.utc),
+    	index=True,
     )
 
     success: Mapped[bool] = mapped_column(
