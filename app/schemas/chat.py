@@ -10,6 +10,12 @@ class ChatRequest(BaseModel):
         max_length=2000,
     )
 
+    user_id: str = Field(
+        default="anonymous",
+        min_length=1,
+        max_length=100,
+    )
+
 
 class ChatResponse(BaseModel):
 
@@ -19,6 +25,8 @@ class ChatResponse(BaseModel):
 
     tool_calls: list[str]
 
-    data: dict[str, Any] = {}
+    data: dict[str, Any] = Field(
+        default_factory=dict
+    )
 
     mode: str = "demo"
