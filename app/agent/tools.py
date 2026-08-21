@@ -156,11 +156,38 @@ def _train_churn_model(db: Session):
 # Tool execution
 # ---------------------------------------------------------
 
+from app.security.authorization import authorize_tool
+
+
 def execute_tool(
     db: Session,
     tool_name: str,
     arguments: dict[str, Any],
+    principal: Any = None,
 ) -> dict[str, Any]:
+
+    # Evaluate authorization before doing any work
+    safe_arguments = dict(arguments or {})
+
+    decision = authorize_tool(
+        principal=principal,
+        tool_name=tool_name,
+        context={"arguments": safe_arguments},
+    )
+
+    if not decision.allowed:
+        # Deterministic denial response without leaking secrets
+        return {
+            "error": "Tool execution denied.",
+            "authorization": {
+                "allowed": False,
+                "decision": decision.decision,
+                "reason_code": decision.reason_code,
+                "reason": decision.reason,
+                "principal_id": decision.principal_id,
+                "tool_name": decision.tool_name,
+            },
+        }
 
     # -----------------------------------------------------
     # Sales analytics

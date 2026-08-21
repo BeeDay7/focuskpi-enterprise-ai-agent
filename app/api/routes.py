@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
@@ -15,6 +17,27 @@ router = APIRouter(
 agent = Agent()
 
 
+@dataclass(frozen=True)
+class AuthenticatedPrincipal:
+    """
+    Temporary development authenticated principal.
+
+    This is intentionally separate from request.user_id.
+
+    user_id:
+        Used for business/audit identity.
+
+    auth_principal:
+        Used by the authorization enforcement boundary.
+
+    This development principal must eventually be replaced
+    by the application's real authentication middleware.
+    """
+
+    id: str
+    role: str = "user"
+
+
 def get_db():
     db = SessionLocal()
 
@@ -24,6 +47,23 @@ def get_db():
         db.close()
 
 
+def get_authenticated_principal() -> AuthenticatedPrincipal:
+    """
+    Temporary development authentication boundary.
+
+    The current Phase 2 application does not yet have a
+    production authentication middleware, so we provide
+    an explicit authenticated principal here.
+
+    The request body does NOT control this identity.
+    """
+
+    return AuthenticatedPrincipal(
+        id="development-user",
+        role="user",
+    )
+
+
 @router.post(
     "/chat",
     response_model=ChatResponse,
@@ -31,11 +71,15 @@ def get_db():
 async def chat(
     request: ChatRequest,
     db: Session = Depends(get_db),
+    auth_principal: AuthenticatedPrincipal = Depends(
+        get_authenticated_principal
+    ),
 ):
     return await agent.run(
         db=db,
         message=request.message,
         user_id=request.user_id,
+        auth_principal=auth_principal,
     )
 
 

@@ -19,6 +19,12 @@ class Agent:
     Falls back to deterministic demo execution when live LLM
     inference is unavailable.
 
+    Authorization is controlled by the application-controlled
+    authenticated principal.
+
+    The client/request user_id is not used as the authorization
+    principal.
+
     The public API exposes stable business-level tool names such as:
 
         sales_by_region
@@ -35,6 +41,7 @@ class Agent:
         db: Session,
         message: str,
         user_id: str = "anonymous",
+        auth_principal: object | None = None,
     ) -> dict:
 
         # -------------------------------------------------
@@ -47,6 +54,7 @@ class Agent:
                 result = await self.llm_agent.run(
                     db=db,
                     user_message=message,
+                    auth_principal=auth_principal,
                 )
 
                 result = self._normalize_result(
@@ -73,6 +81,7 @@ class Agent:
                     fallback_result = self._demo_run(
                         db=db,
                         message=message,
+                        auth_principal=auth_principal,
                     )
 
                     # The user request succeeded through
@@ -131,6 +140,7 @@ class Agent:
                     fallback_result = self._demo_run(
                         db=db,
                         message=message,
+                        auth_principal=auth_principal,
                     )
 
                     self._write_audit_records(
@@ -185,6 +195,7 @@ class Agent:
             result = self._demo_run(
                 db=db,
                 message=message,
+                auth_principal=auth_principal,
             )
 
             self._write_audit_records(
@@ -356,6 +367,7 @@ class Agent:
         self,
         db: Session,
         message: str,
+        auth_principal: object | None = None,
     ) -> dict:
 
         text = message.lower()
@@ -413,7 +425,24 @@ class Agent:
                 db=db,
                 tool_name="get_sales_by_region",
                 arguments={},
+                principal=auth_principal,
             )
+
+            if result.get("authorization", {}).get("allowed") is False:
+                return {
+                    "answer": (
+                        "You are not authorized to execute "
+                        "the requested enterprise tool."
+                    ),
+                    "intent": "authorization_denied",
+                    "tool_calls": [],
+                    "data": {
+                        "authorization": result.get(
+                            "authorization"
+                        )
+                    },
+                    "mode": "demo",
+                }
 
             data["sales_by_region"] = (
                 result.get(
@@ -512,7 +541,30 @@ class Agent:
                                 customer_code
                             )
                         },
+                        principal=auth_principal,
                     )
+
+                    if result.get(
+                        "authorization",
+                        {},
+                    ).get("allowed") is False:
+                        return {
+                            "answer": (
+                                "You are not authorized "
+                                "to execute the requested "
+                                "enterprise tool."
+                            ),
+                            "intent": (
+                                "authorization_denied"
+                            ),
+                            "tool_calls": [],
+                            "data": {
+                                "authorization": result.get(
+                                    "authorization"
+                                )
+                            },
+                            "mode": "demo",
+                        }
 
                     calls.append(
                         "predict_customer"
@@ -545,7 +597,30 @@ class Agent:
                             "list_highest_churn_risk"
                         ),
                         arguments={},
+                        principal=auth_principal,
                     )
+
+                    if result.get(
+                        "authorization",
+                        {},
+                    ).get("allowed") is False:
+                        return {
+                            "answer": (
+                                "You are not authorized "
+                                "to execute the requested "
+                                "enterprise tool."
+                            ),
+                            "intent": (
+                                "authorization_denied"
+                            ),
+                            "tool_calls": [],
+                            "data": {
+                                "authorization": result.get(
+                                    "authorization"
+                                )
+                            },
+                            "mode": "demo",
+                        }
 
                     calls.append(
                         "highest_churn_risk"
@@ -590,7 +665,30 @@ class Agent:
                     "query": message,
                     "top_k": 3,
                 },
+                principal=auth_principal,
             )
+
+            if result.get(
+                "authorization",
+                {},
+            ).get("allowed") is False:
+                return {
+                    "answer": (
+                        "You are not authorized "
+                        "to execute the requested "
+                        "enterprise tool."
+                    ),
+                    "intent": (
+                        "authorization_denied"
+                    ),
+                    "tool_calls": [],
+                    "data": {
+                        "authorization": result.get(
+                            "authorization"
+                        )
+                    },
+                    "mode": "demo",
+                }
 
             retrieved = result.get(
                 "results",
