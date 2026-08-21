@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Mapping
 
+
 DEFAULT_ALLOWED_TOOLS = frozenset(
     {
         "get_sales_by_region",
@@ -93,8 +94,17 @@ class ToolAuthorizationPolicy:
         allowed_tools: set[str] | frozenset[str] | None = None,
         denied_tools: set[str] | frozenset[str] | None = None,
     ) -> None:
-        self.allowed_tools = frozenset(allowed_tools or DEFAULT_ALLOWED_TOOLS)
-        self.denied_tools = frozenset(denied_tools or ())
+        self.allowed_tools = (
+            frozenset(DEFAULT_ALLOWED_TOOLS)
+            if allowed_tools is None
+            else frozenset(allowed_tools)
+        )
+
+        self.denied_tools = (
+            frozenset()
+            if denied_tools is None
+            else frozenset(denied_tools)
+        )
 
     def evaluate(
         self,
@@ -107,10 +117,17 @@ class ToolAuthorizationPolicy:
         try:
             principal_id = _extract_principal_id(principal)
             normalized_tool = _normalize_tool_name(tool_name)
+
             safe_context = {
                 key: value
                 for key, value in safe_context.items()
-                if key not in {"password", "token", "secret", "credentials"}
+                if key
+                not in {
+                    "password",
+                    "token",
+                    "secret",
+                    "credentials",
+                }
             }
 
             if not principal_id or principal_id.lower() == "anonymous":
@@ -177,6 +194,7 @@ class ToolAuthorizationPolicy:
                 reason="Tool is explicitly allowed for the authenticated principal.",
                 context=safe_context,
             )
+
         except Exception:
             return AuthorizationDecision(
                 allowed=False,
@@ -190,7 +208,10 @@ class ToolAuthorizationPolicy:
 
 
 class ToolAuthorizationService:
-    def __init__(self, policy: ToolAuthorizationPolicy | None = None) -> None:
+    def __init__(
+        self,
+        policy: ToolAuthorizationPolicy | None = None,
+    ) -> None:
         self.policy = policy or ToolAuthorizationPolicy()
 
     def authorize(
@@ -205,6 +226,7 @@ class ToolAuthorizationService:
                 tool_name=tool_name,
                 context=context,
             )
+
         except Exception:
             return AuthorizationDecision(
                 allowed=False,
@@ -224,6 +246,7 @@ def authorize_tool(
     policy: ToolAuthorizationPolicy | None = None,
 ) -> AuthorizationDecision:
     service = ToolAuthorizationService(policy=policy)
+
     return service.authorize(
         principal=principal,
         tool_name=tool_name,

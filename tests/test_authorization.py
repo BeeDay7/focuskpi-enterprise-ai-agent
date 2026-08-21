@@ -4,6 +4,7 @@ from app.security.authorization import (
     authorize_tool,
 )
 
+from app.agent.tools import execute_tool
 
 def test_allowed_tool_for_valid_principal():
     decision = authorize_tool(
@@ -157,3 +158,25 @@ def test_unexpected_policy_conditions_fail_closed():
     assert decision.allowed is False
     assert decision.reason_code == "policy_error"
     assert decision.decision == "DENY"
+
+def test_authorized_tool_name_is_normalized_before_execution(monkeypatch):
+    called = []
+
+    def fake_sales(db):
+        called.append(True)
+        return [{"region": "North", "total_sales": 100.0}]
+
+    monkeypatch.setattr(
+        "app.agent.tools.sales_by_region",
+        fake_sales,
+    )
+
+    result = execute_tool(
+        db="session",
+        tool_name="  get_sales_by_region  ",
+        arguments={},
+        principal="user-1",
+    )
+
+    assert called == [True]
+    assert "sales_by_region" in result
