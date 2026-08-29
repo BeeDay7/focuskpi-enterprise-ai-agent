@@ -168,10 +168,11 @@ def execute_tool(
 
     # Evaluate authorization before doing any work
     safe_arguments = dict(arguments or {})
+    normalized_tool_name = str(tool_name).strip()
 
     decision = authorize_tool(
         principal=principal,
-        tool_name=tool_name,
+        tool_name=normalized_tool_name,
         context={"arguments": safe_arguments},
     )
 
@@ -193,7 +194,7 @@ def execute_tool(
     # Sales analytics
     # -----------------------------------------------------
 
-    if tool_name == "get_sales_by_region":
+    if normalized_tool_name == "get_sales_by_region":
 
         return {
             "sales_by_region": sales_by_region(
@@ -205,7 +206,7 @@ def execute_tool(
     # Customer churn prediction
     # -----------------------------------------------------
 
-    if tool_name == "predict_customer_churn":
+    if normalized_tool_name == "predict_customer_churn":
 
         customer_code = str(
             arguments["customer_code"]
@@ -255,7 +256,7 @@ def execute_tool(
     # Highest churn risk ranking
     # -----------------------------------------------------
 
-    if tool_name == "list_highest_churn_risk":
+    if normalized_tool_name == "list_highest_churn_risk":
 
         customers = all_customers(
             db
@@ -316,7 +317,7 @@ def execute_tool(
     # Enterprise knowledge retrieval
     # -----------------------------------------------------
 
-    if tool_name == "search_enterprise_knowledge":
+    if normalized_tool_name == "search_enterprise_knowledge":
 
         query = str(
             arguments["query"]

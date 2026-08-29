@@ -150,3 +150,23 @@ def test_tool_arguments_cannot_override_principal(monkeypatch):
 
     assert result.get("error") == "Tool execution denied."
     assert result["authorization"]["reason_code"] == "missing_principal"
+
+
+def test_tool_name_is_normalized_before_authorization_and_execution(monkeypatch):
+    called = []
+
+    def fake_sales(db):
+        called.append(True)
+        return [{"region": "North", "total_sales": 100.0}]
+
+    monkeypatch.setattr("app.agent.tools.sales_by_region", fake_sales)
+
+    result = execute_tool(
+        db="session",
+        tool_name="  get_sales_by_region  ",
+        arguments={},
+        principal="user-1",
+    )
+
+    assert called == [True]
+    assert result["sales_by_region"][0]["region"] == "North"
